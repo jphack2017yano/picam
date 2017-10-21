@@ -22,9 +22,10 @@ if __name__ == '__main__':
 
     while cv2.waitKey(30) < 0 :
         _, frame = capture.read()
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        img = hog_func(gray)
-        cv2.imshow('red', img)
+        frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
+
+        img = hog_func(frame_s)
+        cv2.imshow('picam', img)
 
     capture.release()
     cv2.destroyAllWindows()

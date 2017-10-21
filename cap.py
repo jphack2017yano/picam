@@ -9,7 +9,7 @@ def compare_hist_func(area_arr) :
     rel_max = 0.0
     rel_max_ind = None
     for index, item in enumerate( area_arr ) :
-        hist = cv2.calcHist([item], [0], None, [256], [0,256])
+        hist = cv2.calcHist([item['img']], [0], None, [256], [0,256])
         rel = cv2.compareHist(hist, model, 0)
         if (rel > rel_max) :
             rel_max = rel
@@ -28,11 +28,13 @@ def hog_func(im):
     human_area = []
     # 長方形で人を囲う
     for (x, y, w, h) in human:
-        human_area.append( im[y:y+h, x:x+w] )
+        human_area.append( {'img': im[y:y+h, x:x+w], 'x': x, 'y': y} )
 
     rel_max_ind = compare_hist_func(human_area)
     if rel_max_ind != None :
-        cv2.rectangle(human_area[rel_max_ind], (0, 0), human_area[rel_max_ind].shape[:2],(255,50,0), 3)
+        # cv2.rectangle(human_area[rel_max_ind], (0, 0), human_area[rel_max_ind].shape[:2],(255,50,0), 3)
+        # cv2.rectangle(im, (human_area[rel_max_ind]['x'], human_area[rel_max_ind]['y']), human_area[rel_max_ind]['img'].shape[:2], (255, 50, 0), 3)
+        cv2.circle( im, ( human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2)), 5, (255, 50, 0), 3)
 
     # 人を検出した座標
     return im

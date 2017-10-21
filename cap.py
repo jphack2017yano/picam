@@ -2,13 +2,21 @@
 import cv2
 import sys
 
-def compare_hist_func(im, area_arr) :
+def compare_hist_func(area_arr) :
     model_im = cv2.imread('0001.png')
     model = cv2.calcHist([model_im], [0], None, [256], [0,256])
 
+    rel_max = 0.0
+    rel_max_ind = None
     for index, item in enumerate( area_arr ) :
         hist = cv2.calcHist([item], [0], None, [256], [0,256])
         rel = cv2.compareHist(hist, model, 0)
+        if (rel > rel_max) :
+            rel_max = rel
+            rel_max_ind = index
+
+    return rel_max_ind
+        
  
 def hog_func(im):
     # HoG特徴量の計算 SVMによる人検出
@@ -20,10 +28,12 @@ def hog_func(im):
     human_area = []
     # 長方形で人を囲う
     for (x, y, w, h) in human:
-        cv2.rectangle(im, (x, y),(x+w, y+h),(0,50,255), 3)
         human_area.append( im[y:y+h, x:x+w] )
 
-    compare_hist_func(im, human_area)
+    rel_max_ind = compare_hist_func(human_area)
+    if rel_max_ind != None :
+        cv2.rectangle(human_area[rel_max_ind], (0, 0), human_area[rel_max_ind].shape[:2],(255,50,0), 3)
+
     # 人を検出した座標
     return im
 

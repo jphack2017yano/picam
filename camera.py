@@ -5,9 +5,8 @@ import sys
 dataset_dir = u"/path/to/dataset/"
  
 def hog_func(im):
-    # HoG特徴量の計算
+    # HoG特徴量の計算 SVMによる人検出
     hog = cv2.HOGDescriptor()
-    # SVMによる人検出
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
     hogParams = {'winStride': (8, 8), 'padding': (32, 32), 'scale': 1.05}
     # 人を検出した座標
@@ -23,5 +22,9 @@ if __name__ == '__main__':
 
     while cv2.waitKey(30) < 0 :
         _, frame = capture.read()
-        img = hog_func(frame)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        img = hog_func(gray)
         cv2.imshow('red', img)
+
+    capture.release()
+    cv2.destroyAllWindows()

@@ -16,8 +16,27 @@ def compare_hist_func(area_arr) :
             rel_max_ind = index
 
     return rel_max_ind
-        
  
+def lr_func(im, x, y) :
+    center_x = int( im.shape[1]/2 )
+    center_y = int( im.shape[0]/2 )
+
+    if x < center_x :
+        print('L')
+    elif x > center_x :
+        print('R')
+    else :
+        print('OK')
+
+    if y < center_y :
+        print('U')
+    elif y > center_y :
+        print('D')
+    else :
+        print('OK')
+
+    print('-----------------------------------')
+
 def hog_func(im):
     # HoG特徴量の計算 SVMによる人検出
     hog = cv2.HOGDescriptor()
@@ -35,6 +54,7 @@ def hog_func(im):
         # cv2.rectangle(human_area[rel_max_ind], (0, 0), human_area[rel_max_ind].shape[:2],(255,50,0), 3)
         # cv2.rectangle(im, (human_area[rel_max_ind]['x'], human_area[rel_max_ind]['y']), human_area[rel_max_ind]['img'].shape[:2], (255, 50, 0), 3)
         cv2.circle( im, ( human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2)), 5, (255, 50, 0), 3)
+        lr_func( im, human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2))
 
     # 人を検出した座標
     return im

@@ -2,10 +2,9 @@
 import cv2
 import sys
 
-def save_func(area_arr) :
-    for index, item in enumerate(area_arr) :
-        name = '%04d.png' % index
-        cv2.imwrite(name, item)
+def compare_hist_func(im, area_arr) :
+    for item in area_arr :
+        hist = cv2.calcHist([item], [0], None, [256], [0,256])
 
  
 def hog_func(im):
@@ -18,10 +17,12 @@ def hog_func(im):
     human_area = []
     # 長方形で人を囲う
     for (x, y, w, h) in human:
-        cv2.rectangle(im, (x, y),(x+w, y+h),(0,50,255), 3)
+        # cv2.rectangle(im, (x, y),(x+w, y+h),(0,50,255), 3)
         human_area.append( im[y:y+h, x:x+w] )
 
-    return im, human_area
+    compare_hist_func(im, human_area)
+    # 人を検出した座標
+    return im
 
 if __name__ == '__main__':
     capture = cv2.VideoCapture(0)
@@ -30,9 +31,8 @@ if __name__ == '__main__':
         _, frame = capture.read()
         frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
 
-        img, areas = hog_func(frame_s)
+        img = hog_func(frame_s)
         cv2.imshow('picam', img)
 
-    save_func(areas)
     capture.release()
     cv2.destroyAllWindows()

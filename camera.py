@@ -2,8 +2,11 @@
 import cv2
 import sys
 
-dataset_dir = u"/path/to/dataset/"
+def compare_hist_func(im, area_arr) :
+    for item in area_arr :
+        hist = cv2.calcHist([item], [0], None, [256], [0,256])
 
+ 
 def hog_func(im):
     # HoG特徴量の計算 SVMによる人検出
     hog = cv2.HOGDescriptor()
@@ -16,6 +19,8 @@ def hog_func(im):
     for (x, y, w, h) in human:
         # cv2.rectangle(im, (x, y),(x+w, y+h),(0,50,255), 3)
         human_area.append( im[y:y+h, x:x+w] )
+
+    compare_hist_func(im, human_area)
     # 人を検出した座標
     return im
 

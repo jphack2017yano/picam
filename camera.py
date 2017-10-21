@@ -3,7 +3,7 @@ import cv2
 import sys
 
 dataset_dir = u"/path/to/dataset/"
- 
+
 def hog_func(im):
     # HoG特徴量の計算 SVMによる人検出
     hog = cv2.HOGDescriptor()
@@ -11,9 +11,11 @@ def hog_func(im):
     hogParams = {'winStride': (8, 8), 'padding': (32, 32), 'scale': 1.05}
     # 人を検出した座標
     human, r = hog.detectMultiScale(im, **hogParams)
+    human_area = []
     # 長方形で人を囲う
     for (x, y, w, h) in human:
-        cv2.rectangle(im, (x, y),(x+w, y+h),(0,50,255), 3)
+        # cv2.rectangle(im, (x, y),(x+w, y+h),(0,50,255), 3)
+        human_area.append( im[y:y+h, x:x+w] )
     # 人を検出した座標
     return im
 

@@ -2,7 +2,11 @@
 import cv2
 import sys
 
-dataset_dir = u"/path/to/dataset/"
+def save_func(area_arr) :
+    for index, item in enumerate(area_arr) :
+        name = '%04d.png' % index
+        cv2.imwrite(name, item)
+
  
 def hog_func(im):
     # HoG特徴量の計算 SVMによる人検出
@@ -11,20 +15,24 @@ def hog_func(im):
     hogParams = {'winStride': (8, 8), 'padding': (32, 32), 'scale': 1.05}
     # 人を検出した座標
     human, r = hog.detectMultiScale(im, **hogParams)
+    human_area = []
     # 長方形で人を囲う
     for (x, y, w, h) in human:
         cv2.rectangle(im, (x, y),(x+w, y+h),(0,50,255), 3)
-    # 人を検出した座標
-    return im
+        human_area.append( im[y:y+h, x:x+w] )
+
+    return im, human_area
 
 if __name__ == '__main__':
     capture = cv2.VideoCapture(0)
 
     while cv2.waitKey(30) < 0 :
         _, frame = capture.read()
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        img = hog_func(gray)
-        cv2.imshow('red', img)
+        frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
 
+        img, areas = hog_func(frame_s)
+        cv2.imshow('picam', img)
+
+    save_func(areas)
     capture.release()
     cv2.destroyAllWindows()

@@ -6,7 +6,7 @@
 
 Servo   ud_servo;
 Servo   lr_servo;
-int     UD,LR,NS=0;
+int     UD,LR,S,DR,NS=0;
 
 void catch_command();
 void reset_command();
@@ -15,8 +15,6 @@ void run_command();
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  ud_servo.attach(UD_SERVO);
-  lr_servo.attach(LR_SERVO);
 }
 
 void loop() {
@@ -29,7 +27,7 @@ void catch_command() {
   Serial.println("catch");
   NS = 0;
   switch(Serial.read()) {
-    case 'U': UD = ((Serial.read()-48)*10)+((Serial.read()-48)); break;
+    case 'U': UD = ((Serial.read()-48)*100)+((Serial.read()-48)*10)+((Serial.read()-48)); break;
     case 'L': LR = ((Serial.read()-48)*100)+((Serial.read()-48)*10)+((Serial.read()-48)); break;
     default : NS++; break;
   }
@@ -44,6 +42,11 @@ void reset_command() {
 
 
 void run_command() {
+  ud_servo.attach(UD_SERVO);
+  lr_servo.attach(LR_SERVO);
   ud_servo.write(UD);
   lr_servo.write(LR);
+  delay(250);
+  ud_servo.detach();
+  lr_servo.detach();
 }

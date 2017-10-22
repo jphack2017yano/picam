@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import io
 import cv2
 import sys
+import picamera
 
 x_arr = ['OK', 'OK', 'OK']
 y_arr = ['OK', 'OK', 'OK']
@@ -75,17 +77,20 @@ def hog_func(im):
     return im
 
 if __name__ == '__main__':
-    capture = cv2.VideoCapture(0)
+    # capture = cv2.VideoCapture(0)
+    stream = io.BytesIO()
+    CAMERA_WIDTH = 320
+    CAMERA_HEIGHT = 240
 
     while cv2.waitKey(30) < 0 :
-        _, frame = capture.read()
-        if frame != None :
-            frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
-            img = hog_func(frame_s)
-        else :
-            img = frame
-
-        cv2.namedWindow('img', cv2.WINDOW_NORMAL)
+        # _, frame = capture.read()
+        with picamera.PiCamera() as camera:
+            camera.resolution = (CAMERA_WIDTH, CAMERA_HEIGHT)
+            camera.capture(stream, format='png')
+        data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+        frame = cv2.imdecode(data, 1)
+        frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
+        img = hog_func(frame_s)
         cv2.imshow('picam', img)
 
     capture.release()

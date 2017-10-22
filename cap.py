@@ -2,6 +2,9 @@
 import cv2
 import sys
 
+x_arr = ['OK', 'OK', 'OK']
+y_arr = ['OK', 'OK', 'OK']
+
 def compare_hist_func(area_arr) :
     model_im = cv2.imread('0001.png')
     model = cv2.calcHist([model_im], [0], None, [256], [0,256])
@@ -20,23 +23,23 @@ def compare_hist_func(area_arr) :
 def lr_func(im, x, y) :
     center_x = int( im.shape[1]/2 )
     center_y = int( im.shape[0]/2 )
-    area = 50
+    area = 100
 
-    if x < center_x+area:
-        print('L')
-    elif x > center_x-area:
-        print('R')
+    if x < center_x-area:
+        x_axis = 'L'
+    elif x > center_x+area:
+        x_axis = 'R'
     else :
-        print('OK')
+        x_axis = 'OK'
 
-    if y < center_y+area:
-        print('U')
-    elif y > center_y-area :
-        print('D')
+    if y < center_y-area:
+        y_axis = 'U'
+    elif y > center_y+area :
+        y_axis = 'D'
     else :
-        print('OK')
+        y_axis = 'OK'
 
-    print('-----------------------------------')
+    return x_axis, y_axis
 
 def hog_func(im):
     # HoG特徴量の計算 SVMによる人検出
@@ -52,10 +55,18 @@ def hog_func(im):
 
     rel_max_ind = compare_hist_func(human_area)
     if rel_max_ind != None :
-        # cv2.rectangle(human_area[rel_max_ind], (0, 0), human_area[rel_max_ind].shape[:2],(255,50,0), 3)
-        # cv2.rectangle(im, (human_area[rel_max_ind]['x'], human_area[rel_max_ind]['y']), human_area[rel_max_ind]['img'].shape[:2], (255, 50, 0), 3)
         cv2.circle( im, ( human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2)), 5, (255, 50, 0), 3)
-        lr_func( im, human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2))
+        x_axis, y_axis = lr_func( im, human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2))
+
+        x_arr.append(x_axis)
+        del x_arr[0]
+        y_arr.append(y_axis)
+        del y_arr[0]
+
+        if len(list(filter(lambda item:item == x_arr[0], x_arr))) == 3 :
+            print(x_arr[0])
+        if len(list(filter(lambda item:item == y_arr[0], y_arr))) == 3 :
+            print(y_arr[0])
 
     # 人を検出した座標
     return im

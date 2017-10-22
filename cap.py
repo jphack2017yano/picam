@@ -2,7 +2,9 @@
 import io
 import cv2
 import sys
-import picamera
+import time
+from picamera import PiCamera
+from picamera.array import PiRGBArray
 
 x_arr = ['OK', 'OK', 'OK']
 y_arr = ['OK', 'OK', 'OK']
@@ -70,20 +72,24 @@ def hog_func(im):
 # 左右の方向転換
         if len(list(filter(lambda item:item == y_arr[0], y_arr))) == 3 :
             print 'y'
-# 左右の方向転換
 # 上下の方向転換
 
     # 人を検出した座標
     return im
 
 if __name__ == '__main__':
-    # capture = cv2.VideoCapture(0)
-    stream = io.BytesIO()
-    CAMERA_WIDTH = 320
-    CAMERA_HEIGHT = 240
+    camera = PiCamera()
+    camera.resolution = (640, 480)
+    camera.framerate = 32
+    rawCapture = PiRGBArray(camera, size=(640, 480))
 
-    while cv2.waitKey(30) < 0 :
+    time.sleep(0.1)
+
+    for frames in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+    # while cv2.waitKey(30) < 0 :
         # _, frame = capture.read()
+        frame = frames.array
+
         with picamera.PiCamera() as camera:
             camera.resolution = (CAMERA_WIDTH, CAMERA_HEIGHT)
             camera.capture(stream, format='png')

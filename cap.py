@@ -79,7 +79,8 @@ if __name__ == '__main__':
 
     while cv2.waitKey(30) < 0 :
         _, frame = capture.read()
-        frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
+        if frame.shape[0] != 0 and frame.shape[1] != 0 :
+            frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
 
         img = hog_func(frame_s)
         cv2.imshow('picam', img)

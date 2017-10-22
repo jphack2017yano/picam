@@ -79,9 +79,11 @@ def hog_func(im):
     return im
 
 if __name__ == '__main__':
+    stream = io.BytesIO()
     camera = PiCamera()
     camera.resolution = (640, 480)
     camera.framerate = 32
+    camera.capture(stream, format='jpeg')
     rawCapture = PiRGBArray(camera, size=(640, 480))
 
     time.sleep(0.1)

@@ -85,6 +85,7 @@ if __name__ == '__main__':
         else :
             img = frame
 
+        cv2.namedWindow('img', cv2.WINDOW_NORMAL)
         cv2.imshow('picam', img)
 
     capture.release()

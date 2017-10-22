@@ -81,8 +81,10 @@ if __name__ == '__main__':
         _, frame = capture.read()
         if frame != None :
             frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
+            img = hog_func(frame_s)
+        else :
+            img = frame
 
-        img = hog_func(frame_s)
         cv2.imshow('picam', img)
 
     capture.release()

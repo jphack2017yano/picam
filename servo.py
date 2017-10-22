@@ -7,7 +7,9 @@ class Servo(object):
     self.con = serial.Serial(path_to_serial,9600,timeout=10)
 
   def turn(self):
-    self.con.write( "U%03dU%03dL%03dL%03d" % (self.UD,self.UD,self.LR,self.LR) )
+    # self.con.write( "U%03dU%03dL%03dL%03d" % (self.UD,self.UD,self.LR,self.LR) )
+    order = 'U' + str(self.UD) + 'U' + str(self.UD) + 'L' + str(self.LR) + 'L' + str(self.LR) 
+    self.con.write(order.encode('utf-8'))
 
   def turn_left(self,resolution=10):
     self.LR = self.LR-resolution if self.LR-resolution>0 else 0

@@ -2,6 +2,9 @@
 import cv2
 import sys
 import time
+import serial
+from servo import Servo 
+servo = Servo("/dev/cu.usbserial-13GP0222");
 
 x_arr = ['OK', 'OK', 'OK']
 y_arr = ['OK', 'OK', 'OK']
@@ -70,9 +73,17 @@ def hog_func(im, capcount):
         if len(list(filter(lambda item:item == x_arr[0], x_arr))) == 3 :
             if x_arr[0] == 'OK' :
                 x_flag = True
+            elif x_arr[0] == 'L' :
+                servo.turn_left()
+            elif x_arr[0] == 'R' :
+                servo.turn_right()
         if len(list(filter(lambda item:item == y_arr[0], y_arr))) == 3 :
             if y_arr[0] == 'OK' :
                 y_flag = True
+            elif y_arr[0] == 'U' :
+                servo.turn_up()
+            elif y_arr[0] == 'D' :
+                servo.turn_down()
 
         if (x_flag and y_flag) :
             capcount += 1

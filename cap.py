@@ -30,9 +30,9 @@ def lr_func(im, x, y) :
     area = 100
 
     if x < center_x-area:
-        x_axis = 'L'
-    elif x > center_x+area:
         x_axis = 'R'
+    elif x > center_x+area:
+        x_axis = 'L'
     else :
         x_axis = 'OK'
 
@@ -97,6 +97,7 @@ if __name__ == '__main__':
     capcount = 0
     capnum = 1
     capture = cv2.VideoCapture(1)
+    servo.turn_front()
     time.sleep(2)
 
     while cv2.waitKey(30) < 0 :

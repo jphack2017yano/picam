@@ -64,9 +64,12 @@ def hog_func(im):
         del y_arr[0]
 
         if len(list(filter(lambda item:item == x_arr[0], x_arr))) == 3 :
-            print(x_arr[0])
+            print 'x'
+# 左右の方向転換
         if len(list(filter(lambda item:item == y_arr[0], y_arr))) == 3 :
-            print(y_arr[0])
+            print 'y'
+# 左右の方向転換
+# 上下の方向転換
 
     # 人を検出した座標
     return im

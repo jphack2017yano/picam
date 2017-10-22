@@ -90,7 +90,7 @@ if __name__ == '__main__':
         # _, frame = capture.read()
         frame = frames.array
 
-        with picamera.PiCamera() as camera:
+        with PiCamera.PiCamera() as camera:
             camera.resolution = (CAMERA_WIDTH, CAMERA_HEIGHT)
             camera.capture(stream, format='png')
         data = np.fromstring(stream.getvalue(), dtype=np.uint8)

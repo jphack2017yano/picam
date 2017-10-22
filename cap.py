@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
     while cv2.waitKey(30) < 0 :
         _, frame = capture.read()
-        if frame.shape[0] != 0 and frame.shape[1] != 0 :
+        if frame != None :
             frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
 
         img = hog_func(frame_s)

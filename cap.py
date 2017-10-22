@@ -20,17 +20,18 @@ def compare_hist_func(area_arr) :
 def lr_func(im, x, y) :
     center_x = int( im.shape[1]/2 )
     center_y = int( im.shape[0]/2 )
+    area = 50
 
-    if x < center_x :
+    if x < center_x+area:
         print('L')
-    elif x > center_x :
+    elif x > center_x-area:
         print('R')
     else :
         print('OK')
 
-    if y < center_y :
+    if y < center_y+area:
         print('U')
-    elif y > center_y :
+    elif y > center_y-area :
         print('D')
     else :
         print('OK')

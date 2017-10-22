@@ -10,13 +10,11 @@ def save_func(area_arr) :
  
 def hog_func(im):
     # HoG特徴量の計算 SVMによる人検出
-    # hog = cv2.HOGDescriptor()
-    # hog = cv2.HOGDescriptor((48,96), (16,16), (8,8), (8,8), 9)
-    hog = cv2.HOGDescriptor((32,64), (8,8), (4,4), (4,4), 9)
+    hog = cv2.HOGDescriptor()
+    # hog = cv2.HOGDescriptor((32,64), (8,8), (4,4), (4,4), 9)
 
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
-    # hog.setSVMDetector(cv2.HOGDescriptor_getDaimlerPeopleDetector())
-    hogParams = {'hitThreshold': -0.1, 'winStride': (4, 4), 'padding': (32, 32), 'scale': 1.05}
+    hogParams = {'hitThreshold': 0.1, 'winStride': (4, 4), 'padding': (32, 32), 'scale': 1.05}
     # 人を検出した座標
     human, r = hog.detectMultiScale(im, **hogParams)
     human_area = []

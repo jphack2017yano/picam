@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import cv2
 import sys
+import time
 
 x_arr = ['OK', 'OK', 'OK']
 y_arr = ['OK', 'OK', 'OK']
@@ -41,7 +42,7 @@ def lr_func(im, x, y) :
 
     return x_axis, y_axis
 
-def hog_func(im):
+def hog_func(im, capcount):
     # HoG特徴量の計算 SVMによる人検出
     hog = cv2.HOGDescriptor()
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
@@ -55,7 +56,7 @@ def hog_func(im):
 
     rel_max_ind = compare_hist_func(human_area)
     if rel_max_ind != None :
-        cv2.circle( im, ( human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2)), 5, (255, 50, 0), 3)
+        # cv2.circle( im, ( human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2)), 5, (255, 50, 0), 3)
         x_axis, y_axis = lr_func( im, human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2))
 
         x_arr.append(x_axis)
@@ -63,23 +64,44 @@ def hog_func(im):
         y_arr.append(y_axis)
         del y_arr[0]
 
+        x_flag = False
+        y_flag = False
+
         if len(list(filter(lambda item:item == x_arr[0], x_arr))) == 3 :
-            print(x_arr[0])
+            if x_arr[0] == 'OK' :
+                x_flag = True
         if len(list(filter(lambda item:item == y_arr[0], y_arr))) == 3 :
-            print(y_arr[0])
+            if y_arr[0] == 'OK' :
+                y_flag = True
+
+        if (x_flag and y_flag) :
+            capcount += 1
+        else :
+            capcount = 0
 
     # 人を検出した座標
-    return im
+    return im, capcount
 
 if __name__ == '__main__':
-    capture = cv2.VideoCapture(0)
+    capcount = 0
+    capnum = 1
+    capture = cv2.VideoCapture(1)
+    time.sleep(2)
 
     while cv2.waitKey(30) < 0 :
         _, frame = capture.read()
         frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
 
-        img = hog_func(frame_s)
+        img, capcount = hog_func(frame_s, capcount)
         cv2.imshow('picam', img)
+        
+        print(capcount)
+
+        if (capcount == 10) :
+            name = '%02d.png' % capnum
+            cv2.imwrite(name, img)
+            capcount = 0
+            capnum += 1
 
     capture.release()
     cv2.destroyAllWindows()

@@ -23,7 +23,7 @@ def compare_hist_func(area_arr) :
             rel_max_ind = index
 
     return rel_max_ind
- 
+
 def lr_func(im, x, y) :
     center_x = int( im.shape[1]/2 )
     center_y = int( im.shape[0]/2 )
@@ -89,10 +89,6 @@ if __name__ == '__main__':
     # while cv2.waitKey(30) < 0 :
         # _, frame = capture.read()
         frame = frames.array
-
-        with PiCamera.PiCamera() as camera:
-            camera.resolution = (CAMERA_WIDTH, CAMERA_HEIGHT)
-            camera.capture(stream, format='png')
         data = np.fromstring(stream.getvalue(), dtype=np.uint8)
         frame = cv2.imdecode(data, 1)
         frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)

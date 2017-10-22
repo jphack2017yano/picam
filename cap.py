@@ -3,7 +3,7 @@ import io
 import cv2
 import sys
 import time
-from picamera import PiCamera
+import picamera
 from picamera.array import PiRGBArray
 
 x_arr = ['OK', 'OK', 'OK']
@@ -23,7 +23,7 @@ def compare_hist_func(area_arr) :
             rel_max_ind = index
 
     return rel_max_ind
- 
+
 def lr_func(im, x, y) :
     center_x = int( im.shape[1]/2 )
     center_y = int( im.shape[0]/2 )
@@ -78,7 +78,7 @@ def hog_func(im):
     return im
 
 if __name__ == '__main__':
-    camera = PiCamera()
+    camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     camera.framerate = 32
     rawCapture = PiRGBArray(camera, size=(640, 480))
@@ -90,7 +90,7 @@ if __name__ == '__main__':
         # _, frame = capture.read()
         frame = frames.array
 
-        with PiCamera.PiCamera() as camera:
+        with picamera.PiCamera() as camera:
             camera.resolution = (CAMERA_WIDTH, CAMERA_HEIGHT)
             camera.capture(stream, format='png')
         data = np.fromstring(stream.getvalue(), dtype=np.uint8)

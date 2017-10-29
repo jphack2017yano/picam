@@ -6,6 +6,7 @@ import sys
 import time
 import serial
 import servo 
+import requests
 
 x_arr = ['OK', 'OK', 'OK']
 y_arr = ['OK', 'OK', 'OK']
@@ -99,6 +100,12 @@ def hog_func(im, capcount):
     # 人を検出した座標
     return im, capcount
 
+def sendImage(im) :
+    cv2.imwrite('out.png', im)
+    url = 'http://ec2-18-216-61-164.us-east-2.compute.amazonaws.com/image/upload?id=nurunuru'
+    files = {'image':open('out.png', 'rb')}
+    r = requests.post(url, files=files)
+
 if __name__ == '__main__':
     camera = PiCamera()
     camera.resolution = (320, 240)
@@ -114,7 +121,11 @@ if __name__ == '__main__':
         cv2.imshow("Frame", image_f)
         key = cv2.waitKey(1) & 0xFF
         rawCapture.truncate(0)
-        if key == ord("q"):
+        if capcount == 3 :
+            sendImage(image)
+        if key == ord("c"):
+            sendImage(image)
+        elif key == ord("q"):
             break
 
     cv2.destroyAllWindows()

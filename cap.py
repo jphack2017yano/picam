@@ -7,8 +7,8 @@ import time
 import serial
 import servo 
 
-x_arr = ['OK', 'OK', 'OK', 'OK', 'OK', 'OK']
-y_arr = ['OK', 'OK', 'OK', 'OK', 'OK', 'OK']
+x_arr = ['OK', 'OK', 'OK']
+y_arr = ['OK', 'OK', 'OK']
 
 def compare_hist_func(area_arr) :
     model_im = cv2.imread('0001.png')

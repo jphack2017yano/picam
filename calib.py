@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import cv2
 import sys
+import time
 
 def save_func(area_arr) :
     for index, item in enumerate(area_arr) :
@@ -26,15 +29,22 @@ def hog_func(im):
     return im, human_area
 
 if __name__ == '__main__':
-    capture = cv2.VideoCapture(1)
+    camera = PiCamera()
+    camera.resolution = (320, 240)
+    camera.framerate = 16
+    rawCapture = PiRGBArray(camera, size=(320, 240))
 
-    while cv2.waitKey(30) < 0 :
-        _, frame = capture.read()
-        frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
+    time.sleep(2)
 
-        img, areas = hog_func(frame_s)
-        cv2.imshow('picam', img)
+    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+        image = frame.array
+        image_f, areas = hog_func(image)
+
+        cv2.imshow('picam', image_f)
+        key = cv2.waitKey(1) & 0xFF
+        rawCapture.truncate(0)
+        if key == ord("q"):
+            break
 
     save_func(areas)
-    capture.release()
     cv2.destroyAllWindows()

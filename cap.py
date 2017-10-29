@@ -101,36 +101,20 @@ def hog_func(im, capcount):
 
 if __name__ == '__main__':
     camera = PiCamera()
-    camera.resolution = (640, 480)
-    camera.framerate = 32
-    rawCapture = PiRGBArray(camera, size=(640, 480))
-    #stream = io.BytesIO()
+    camera.resolution = (320, 240)
+    camera.framerate = 16
+    rawCapture = PiRGBArray(camera, size=(320, 240))
 
     capcount = 0
     capnum = 1
-    #capture = cv2.VideoCapture(1)
     time.sleep(2)
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-    #for frame in camera.capture_continuous(stream, format="jpeg"):
         image = frame.array
-        cv2.imshow("Frame", image)
+        image_f, capcount = hog_func(image, capcount)
+        cv2.imshow("Frame", image_f)
         key = cv2.waitKey(1) & 0xFF
         rawCapture.truncate(0)
         if key == ord("q"):
             break
 
-    #while cv2.waitKey(30) < 0 :
-    #    _, frame = capture.read()
-    #    frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
-
-    #    img, capcount = hog_func(frame_s, capcount)
-    #    cv2.imshow('picam', img)
-
-    #    if (capcount == 10) :
-    #        name = '%02d.png' % capnum
-    #        cv2.imwrite(name, img)
-    #        capcount = 0
-    #        capnum += 1
-
-    #capture.release()
     cv2.destroyAllWindows()

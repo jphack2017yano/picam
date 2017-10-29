@@ -26,7 +26,7 @@ def hog_func(im):
     return im, human_area
 
 if __name__ == '__main__':
-    capture = cv2.VideoCapture(0)
+    capture = cv2.VideoCapture(1)
 
     while cv2.waitKey(30) < 0 :
         _, frame = capture.read()

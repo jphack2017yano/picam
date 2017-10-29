@@ -4,10 +4,10 @@ import sys
 import time
 import serial
 from servo import Servo 
-servo = Servo("/dev/cu.usbserial-13GP0222");
+# servo = Servo("/dev/cu.usbserial-13GP0222");
 
-x_arr = ['OK', 'OK', 'OK']
-y_arr = ['OK', 'OK', 'OK']
+x_arr = ['OK', 'OK', 'OK', 'OK', 'OK', 'OK']
+y_arr = ['OK', 'OK', 'OK', 'OK', 'OK', 'OK']
 
 def compare_hist_func(area_arr) :
     model_im = cv2.imread('0001.png')
@@ -27,18 +27,19 @@ def compare_hist_func(area_arr) :
 def lr_func(im, x, y) :
     center_x = int( im.shape[1]/2 )
     center_y = int( im.shape[0]/2 )
-    area = 100
+    x_area = 50
+    y_area = 30
 
-    if x < center_x-area:
+    if x < center_x-x_area:
         x_axis = 'R'
-    elif x > center_x+area:
+    elif x > center_x+x_area:
         x_axis = 'L'
     else :
         x_axis = 'OK'
 
-    if y < center_y-area:
+    if y < center_y-y_area:
         y_axis = 'U'
-    elif y > center_y+area :
+    elif y > center_y+y_area :
         y_axis = 'D'
     else :
         y_axis = 'OK'
@@ -60,6 +61,7 @@ def hog_func(im, capcount):
     rel_max_ind = compare_hist_func(human_area)
     if rel_max_ind != None :
         # cv2.circle( im, ( human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2)), 5, (255, 50, 0), 3)
+        cv2.rectangle(im, ( human_area[rel_max_ind]['x'], human_area[rel_max_ind]['y'] ), ( human_area[rel_max_ind]['img'].shape[1], human_area[rel_max_ind]['img'].shape[0] ), (255, 10, 0), 3)
         x_axis, y_axis = lr_func( im, human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2))
 
         x_arr.append(x_axis)
@@ -70,20 +72,27 @@ def hog_func(im, capcount):
         x_flag = False
         y_flag = False
 
-        if len(list(filter(lambda item:item == x_arr[0], x_arr))) == 3 :
+        print('x : ', x_arr)
+        print('y : ', y_arr)
+
+        if len(list(filter(lambda item:item == x_arr[0], x_arr))) == 6 :
             if x_arr[0] == 'OK' :
                 x_flag = True
             elif x_arr[0] == 'L' :
-                servo.turn_left()
+                # servo.turn_left()
+                print('L')
             elif x_arr[0] == 'R' :
-                servo.turn_right()
-        if len(list(filter(lambda item:item == y_arr[0], y_arr))) == 3 :
+                # servo.turn_right()
+                print('R')
+        if len(list(filter(lambda item:item == y_arr[0], y_arr))) == 6 :
             if y_arr[0] == 'OK' :
                 y_flag = True
             elif y_arr[0] == 'U' :
-                servo.turn_up()
+                # servo.turn_up()
+                print('U')
             elif y_arr[0] == 'D' :
-                servo.turn_down()
+                # servo.turn_down()
+                print('D')
 
         if (x_flag and y_flag) :
             capcount += 1
@@ -97,7 +106,7 @@ if __name__ == '__main__':
     capcount = 0
     capnum = 1
     capture = cv2.VideoCapture(1)
-    servo.turn_front()
+    # servo.turn_front()
     time.sleep(2)
 
     while cv2.waitKey(30) < 0 :
@@ -106,8 +115,6 @@ if __name__ == '__main__':
 
         img, capcount = hog_func(frame_s, capcount)
         cv2.imshow('picam', img)
-        
-        print(capcount)
 
         if (capcount == 10) :
             name = '%02d.png' % capnum

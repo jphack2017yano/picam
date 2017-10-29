@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import cv2
 import sys
 import time
 import serial
-from servo import Servo 
-# servo = Servo("/dev/cu.usbserial-13GP0222");
+import servo 
 
 x_arr = ['OK', 'OK', 'OK', 'OK', 'OK', 'OK']
 y_arr = ['OK', 'OK', 'OK', 'OK', 'OK', 'OK']
@@ -79,20 +80,16 @@ def hog_func(im, capcount):
             if x_arr[0] == 'OK' :
                 x_flag = True
             elif x_arr[0] == 'L' :
-                # servo.turn_left()
-                print('L')
+                servo.move('l')
             elif x_arr[0] == 'R' :
-                # servo.turn_right()
-                print('R')
+                servo.move('r')
         if len(list(filter(lambda item:item == y_arr[0], y_arr))) == 6 :
             if y_arr[0] == 'OK' :
                 y_flag = True
             elif y_arr[0] == 'U' :
-                # servo.turn_up()
-                print('U')
+                servo.move('u')
             elif y_arr[0] == 'D' :
-                # servo.turn_down()
-                print('D')
+                servo.move('d')
 
         if (x_flag and y_flag) :
             capcount += 1
@@ -103,24 +100,37 @@ def hog_func(im, capcount):
     return im, capcount
 
 if __name__ == '__main__':
+    camera = PiCamera()
+    camera.resolution = (640, 480)
+    camera.framerate = 32
+    rawCapture = PiRGBArray(camera, size=(640, 480))
+    #stream = io.BytesIO()
+
     capcount = 0
     capnum = 1
-    capture = cv2.VideoCapture(1)
-    # servo.turn_front()
+    #capture = cv2.VideoCapture(1)
     time.sleep(2)
+    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+    #for frame in camera.capture_continuous(stream, format="jpeg"):
+        image = frame.array
+        cv2.imshow("Frame", image)
+        key = cv2.waitKey(1) & 0xFF
+        rawCapture.truncate(0)
+        if key == ord("q"):
+            break
 
-    while cv2.waitKey(30) < 0 :
-        _, frame = capture.read()
-        frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
+    #while cv2.waitKey(30) < 0 :
+    #    _, frame = capture.read()
+    #    frame_s = cv2.resize(frame, None, fx=0.5, fy=0.5)
 
-        img, capcount = hog_func(frame_s, capcount)
-        cv2.imshow('picam', img)
+    #    img, capcount = hog_func(frame_s, capcount)
+    #    cv2.imshow('picam', img)
 
-        if (capcount == 10) :
-            name = '%02d.png' % capnum
-            cv2.imwrite(name, img)
-            capcount = 0
-            capnum += 1
+    #    if (capcount == 10) :
+    #        name = '%02d.png' % capnum
+    #        cv2.imwrite(name, img)
+    #        capcount = 0
+    #        capnum += 1
 
-    capture.release()
+    #capture.release()
     cv2.destroyAllWindows()

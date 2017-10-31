@@ -5,7 +5,6 @@ import cv2
 import sys
 import time
 import serial
-import servo 
 import requests
 
 x_arr = ['OK', 'OK', 'OK']
@@ -25,7 +24,7 @@ def compare_hist_func(area_arr) :
             rel_max_ind = index
 
     return rel_max_ind
- 
+
 def lr_func(im, x, y) :
     center_x = int( im.shape[1]/2 )
     center_y = int( im.shape[0]/2 )
@@ -66,6 +65,7 @@ def hog_func(im, capcount):
         cv2.rectangle(im, ( human_area[rel_max_ind]['x'], human_area[rel_max_ind]['y'] ), ( human_area[rel_max_ind]['img'].shape[1], human_area[rel_max_ind]['img'].shape[0] ), (255, 10, 0), 3)
         x_axis, y_axis = lr_func( im, human_area[rel_max_ind]['x'] + int(human_area[rel_max_ind]['img'].shape[1]/2), human_area[rel_max_ind]['y'] + int(human_area[rel_max_ind]['img'].shape[0]/2))
 
+
         x_arr.append(x_axis)
         del x_arr[0]
         y_arr.append(y_axis)
@@ -76,21 +76,21 @@ def hog_func(im, capcount):
 
         print('x : ', x_arr)
         print('y : ', y_arr)
-
+        s = serial.Serial("/dev/ttyS0",9600,timeout=10)
         if len(list(filter(lambda item:item == x_arr[0], x_arr))) == 6 :
             if x_arr[0] == 'OK' :
                 x_flag = True
             elif x_arr[0] == 'L' :
-                servo.move('l')
+                s.write('l')
             elif x_arr[0] == 'R' :
-                servo.move('r')
+                s.write('r')
         if len(list(filter(lambda item:item == y_arr[0], y_arr))) == 6 :
             if y_arr[0] == 'OK' :
                 y_flag = True
             elif y_arr[0] == 'U' :
-                servo.move('u')
+                s.write('u')
             elif y_arr[0] == 'D' :
-                servo.move('d')
+                s.write('d')
 
         if (x_flag and y_flag) :
             capcount += 1

@@ -49,6 +49,7 @@ def lr_func(im, x, y) :
 
 def hog_func(im, capcount):
     # HoG特徴量の計算 SVMによる人検出
+    s = serial.Serial("/dev/ttyS0",9600,timeout=10)
     hog = cv2.HOGDescriptor()
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
     hogParams = {'winStride': (8, 8), 'padding': (32, 32), 'scale': 1.05}
@@ -76,7 +77,6 @@ def hog_func(im, capcount):
 
         print('x : ', x_arr)
         print('y : ', y_arr)
-        s = serial.Serial("/dev/ttyS0",9600,timeout=10)
         if len(list(filter(lambda item:item == x_arr[0], x_arr))) == 6 :
             if x_arr[0] == 'OK' :
                 x_flag = True
